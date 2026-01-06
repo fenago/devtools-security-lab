@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTools Treasure Hunt Walkthrough</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #21262d;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #00BFA5, #FF7043);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: #8b949e;
+            font-size: 1.1rem;
+        }
+        .intro {
+            background: rgba(0, 191, 165, 0.1);
+            border: 1px solid rgba(0, 191, 165, 0.3);
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin-bottom: 40px;
+        }
+        .intro a {
+            color: #00BFA5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .intro a:hover {
+            text-decoration: underline;
+        }
+        h2 {
+            font-size: 1.6rem;
+            margin: 50px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #21262d;
+            color: #fff;
+        }
+        h3 {
+            color: #00BFA5;
+            margin: 25px 0 15px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .step {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .step-number {
+            background: linear-gradient(90deg, #00BFA5, #00897B);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 1.3rem;
+            color: #fff;
+        }
+        .what-to-do {
+            background: rgba(56, 139, 253, 0.1);
+            border-left: 3px solid #388bfd;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .what-to-do strong {
+            color: #388bfd;
+        }
+        .what-you-find {
+            background: rgba(255, 112, 67, 0.1);
+            border-left: 3px solid #FF7043;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .what-you-find strong {
+            color: #FF7043;
+        }
+        .lesson {
+            background: rgba(0, 191, 165, 0.1);
+            border-left: 3px solid #00BFA5;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .lesson strong {
+            color: #00BFA5;
+        }
+        pre {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #79c0ff;
+        }
+        pre code {
+            color: #c9d1d9;
+        }
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #21262d;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background: #161b22;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #8b949e;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #00BFA5;
+        }
+        .summary {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        .fix-section {
+            background: rgba(46, 160, 67, 0.1);
+            border: 1px solid rgba(46, 160, 67, 0.3);
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 40px 0;
+        }
+        .fix-section h2 {
+            color: #2ea043;
+            border: none;
+            margin-top: 0;
+            padding: 0;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #484f58;
+            border-top: 1px solid #21262d;
+            margin-top: 60px;
+        }
+        footer a {
+            color: #00BFA5;
+            text-decoration: none;
+        }
+        .keyboard {
+            display: inline-block;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Lab Home</a>
+        <header>
+            <h1>DevTools Treasure Hunt</h1>
+            <p class="subtitle">Uncover 15+ Hidden Secrets Step by Step</p>
+        </header>
+        <div class="intro">
+            <p><strong>Before You Start:</strong></p>
+            <ol>
+                <li>Open the <a href="vulnerable-demo.html" target="_blank">vulnerable-demo.html</a> page in Google Chrome</li>
+                <li>Right-click anywhere and select "Inspect" (or press <span class="keyboard">Ctrl+Shift+I</span> on Windows, <span class="keyboard">Cmd+Option+I</span> on Mac)</li>
+                <li>Follow each step below to discover hidden secrets</li>
+            </ol>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">Check HTML Comments (Elements Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Click the <strong>Elements</strong> tab in DevTools</li>
+                    <li>Look at the very top of the HTML inside the <code>&lt;head&gt;</code> tag</li>
+                    <li>Scroll to the very bottom, just before the closing <code>&lt;/html&gt;</code> tag</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+                <p>In the head section:</p>
+<pre><code>&lt;!-- TODO: Remove before production - Config for staging environment --&gt;
+&lt;!-- FIREBASE_CONFIG: AIzaSyDOCAbC123dEf456GhI789jKl_MnsT321_rwXyz --&gt;
+&lt;!-- ADMIN_PASSWORD: SuperSecure2024! --&gt;</code></pre>
+                <p>At the bottom: Deployment notes with SSH paths, S3 credentials, and Grafana login</p>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> HTML comments ship to every user. They are not private.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">Inspect Hidden Elements (Elements Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Press <span class="keyboard">Ctrl+F</span> (or <span class="keyboard">Cmd+F</span>) to open search in the Elements panel</li>
+                    <li>Search for <code>hidden-admin-panel</code></li>
+                    <li>Click on the div to select it</li>
+                    <li>Look at its attributes in the panel</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>data-admin-key="sk-admin-Xk9Lm3Np7Qr2St5Uv8Wx1Yz4Ab6Cd9Ef"
+data-debug-token="dbg_tk_2024_internal_use_only"
+data-feature-flags="beta,experimental,admin-override"</code></pre>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> <code>display: none</code> hides elements visually but not from the DOM. Data attributes are fully visible.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">Global Search for API Keys (Sources Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Click the <strong>Sources</strong> tab</li>
+                    <li>Press <span class="keyboard">Ctrl+Shift+F</span> (or <span class="keyboard">Cmd+Option+F</span>) to open global search</li>
+                    <li>Search for <code>sk-</code> (common OpenAI key prefix)</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>OPENAI_API_KEY: "sk-proj-Abc123Def456Ghi789Jkl012Mno345Pqr678Stu901Vwx234Yz"</code></pre>
+                <p><strong>Try these other searches:</strong></p>
+                <ul>
+                    <li><code>sk_live</code> - finds Stripe secret key</li>
+                    <li><code>password</code> - finds multiple passwords</li>
+                    <li><code>secret</code> - finds JWT secret, internal API secret</li>
+                    <li><code>mongodb</code> - finds database connection string with credentials</li>
+                    <li><code>AKIA</code> - finds AWS access key</li>
+                </ul>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Bundled JavaScript is fully searchable. Minification does not hide values.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <div class="step-title">Find the Complete ENV Object (Sources Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>In the Sources tab, expand the file tree on the left</li>
+                    <li>Click on the HTML file to view its source</li>
+                    <li>Scroll to find the <code>const ENV = {</code> section</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+                <p>25+ exposed credentials including:</p>
+                <ul>
+                    <li>OpenAI API key and org ID</li>
+                    <li>Stripe publishable AND secret keys</li>
+                    <li>Firebase configuration</li>
+                    <li>MongoDB connection string with username/password</li>
+                    <li>Redis URL with password</li>
+                    <li>AWS access key and secret key</li>
+                    <li>Twilio, SendGrid, GitHub, Slack tokens</li>
+                    <li>JWT signing secret and encryption key</li>
+                </ul>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Environment variables bundled at build time become static strings in your JavaScript.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <div class="step-title">Decode the "Obfuscated" Config (Console)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Click the <strong>Console</strong> tab</li>
+                    <li>Type this command and press Enter:</li>
+                </ul>
+<pre><code>atob("eyJhZG1pbl9wYXNzd29yZCI6IkFkbWluQDEyMyIsIm1hc3Rlcl9rZXkiOiJtc3RyX2tleV8yMDI0X3VsdHJhX3NlY3JldCIsImJhY2tkb29yX2VuYWJsZWQiOnRydWUsInNlY3JldF9lbmRwb2ludCI6Ii9hcGkvdjEvYWRtaW4vc2VjcmV0In0=")</code></pre>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>{
+  "admin_password": "Admin@123",
+  "master_key": "mstr_key_2024_ultra_secret",
+  "backdoor_enabled": true,
+  "secret_endpoint": "/api/v1/admin/secret"
+}</code></pre>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Base64 is encoding, not encryption. Anyone can decode it instantly.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <div class="step-title">Crack the "Encrypted" Users (Console)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>In the Console, type:</li>
+                </ul>
+<pre><code>rot13("hfre1:cnffjbeq123,hfre2:frpher456,nqzva:FhcreNqzva2024!")</code></pre>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>user1:password123,user2:secure456,admin:SuperAdmin2024!</code></pre>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> ROT13 and simple ciphers provide zero security. Real encryption requires proper cryptographic libraries.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">7</div>
+                <div class="step-title">Use the Hidden Console Commands (Console)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <p>In the Console, type each command:</p>
+<pre><code>revealSecrets()</code></pre>
+                <p>This dumps all API keys, decoded configs, and decrypted users.</p>
+<pre><code>getConfig()</code></pre>
+                <p>This returns the complete ENV object. Expand it to see all values.</p>
+<pre><code>debugMode()</code></pre>
+                <p>This shows a formatted table of all config plus localStorage and sessionStorage contents.</p>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Developers often leave debug functions in production code. Check the global scope.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">8</div>
+                <div class="step-title">Inspect Browser Storage (Application Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Click the <strong>Application</strong> tab</li>
+                    <li>Expand "Local Storage" in the left sidebar</li>
+                    <li>Click on your file's origin</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find in Local Storage:</strong>
+                <ul>
+                    <li><code>user_auth_token</code> - A JWT token (decodable)</li>
+                    <li><code>api_key_backup</code> - The OpenAI API key again</li>
+                    <li><code>stripe_customer_id</code> - Customer identifier</li>
+                    <li><code>user_preferences</code> - JSON with access level set to "admin"</li>
+                </ul>
+                <p><strong>Now check Session Storage:</strong></p>
+                <ul>
+                    <li><code>temp_auth</code> - Temporary authentication token</li>
+                    <li><code>debug_info</code> - JSON with secret endpoint path</li>
+                </ul>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Browser storage is not secure storage. Anyone can read it.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">9</div>
+                <div class="step-title">Decode the JWT Token (External Tool)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Copy the <code>user_auth_token</code> value from localStorage</li>
+                    <li>Go to <a href="https://jwt.io" target="_blank">https://jwt.io</a></li>
+                    <li>Paste the token in the "Encoded" field</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>{
+  "userId": "12345",
+  "email": "admin@securechat.com",
+  "role": "admin",
+  "iat": 1709512000,
+  "exp": 1741048000
+}</code></pre>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> JWT tokens are encoded, not encrypted. The payload is readable by anyone. Only the signature provides integrity.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">10</div>
+                <div class="step-title">Watch Network Requests (Network Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Click the <strong>Network</strong> tab</li>
+                    <li>Refresh the page to capture all requests</li>
+                    <li>Wait 1-2 seconds for the delayed requests to fire</li>
+                    <li>Click on the request to <code>httpbin.org/headers</code></li>
+                    <li>Click the "Headers" tab in the detail panel</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find in Request Headers:</strong>
+<pre><code>Authorization: Bearer sk-proj-Abc123Def456Ghi789Jkl012Mno345Pqr678Stu901Vwx234Yz
+X-API-Key: int_sec_Qm8Kp3Lx7Nv2Ry5Tw9Uz
+X-Firebase-Key: AIzaSyDOCAbC123dEf456GhI789jKl</code></pre>
+                <p><strong>Now check the POST request:</strong></p>
+                <ul>
+                    <li>Click on the request to <code>httpbin.org/post</code></li>
+                    <li>Click the "Payload" tab to see API keys in the request body</li>
+                </ul>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Every request header and body is visible in DevTools. API keys sent from the browser are exposed.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">11</div>
+                <div class="step-title">Try the Konami Code Easter Egg</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Click somewhere on the page (not in DevTools)</li>
+                    <li>Type this sequence on your keyboard:</li>
+                </ul>
+                <p style="text-align: center; font-size: 1.5rem; margin: 20px 0;">
+                    ↑ ↑ ↓ ↓ ← → ← → B A
+                </p>
+            </div>
+            <div class="what-you-find">
+                <strong>What happens:</strong>
+                <ul>
+                    <li>An alert appears welcoming you as Admin</li>
+                    <li>The hidden admin panel becomes visible</li>
+                    <li>The Console shows the decoded admin credentials</li>
+                </ul>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Easter eggs in production code can expose sensitive functionality. Always review what ships.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">12</div>
+                <div class="step-title">Check for Inline Event Handlers (Elements Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>In the Elements panel, find the Send button</li>
+                    <li>Look at its attributes</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>onclick="sendMessage()"</code></pre>
+                <p>Now search for <code>sendMessage</code> in Sources to see the full function. Notice it constructs API calls with exposed keys.</p>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Inline handlers point you to JavaScript functions worth investigating.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">13</div>
+                <div class="step-title">Review Console Startup Messages (Console)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Look at the Console output that appeared when the page loaded</li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+<pre><code>SecureChat Pro v2.3.1
+Debug Mode: ENABLED
+Initialized with session: sess_...
+API Endpoint: https://api.openai.com/v1
+Tip: Type revealSecrets() to see all configuration</code></pre>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Console logs in production reveal application internals and sometimes hint at debug features.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">14</div>
+                <div class="step-title">Attempt to Send a Message (Network Panel)</div>
+            </div>
+            <div class="what-to-do">
+                <strong>What to do:</strong>
+                <ul>
+                    <li>Keep the Network tab open</li>
+                    <li>Type a message in the chat input</li>
+                    <li>Click Send</li>
+                    <li>Watch the Network tab for a new request to <code>api.openai.com</code></li>
+                </ul>
+            </div>
+            <div class="what-you-find">
+                <strong>What you will find:</strong>
+                <p>The request will fail (invalid key), but you can see:</p>
+                <ul>
+                    <li>The exact endpoint being called</li>
+                    <li>The Authorization header with the API key</li>
+                    <li>The request body structure</li>
+                    <li>The organization ID</li>
+                </ul>
+            </div>
+            <div class="lesson">
+                <strong>Lesson:</strong> Even failed requests expose your API structure and credentials.
+            </div>
+        </div>
+        <div class="summary">
+            <h2 style="margin-top: 0; border: none; padding: 0;">Summary: What We Found</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Secrets Discovered</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>HTML Comments</td>
+                        <td>Firebase key, admin password, deployment notes, SSH paths, S3 keys, Grafana login</td>
+                    </tr>
+                    <tr>
+                        <td>Data Attributes</td>
+                        <td>Admin key, debug token, feature flags</td>
+                    </tr>
+                    <tr>
+                        <td>JavaScript ENV</td>
+                        <td>25+ API keys (OpenAI, Stripe, AWS, Twilio, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td>Base64 Config</td>
+                        <td>Admin password, master key, backdoor endpoint</td>
+                    </tr>
+                    <tr>
+                        <td>ROT13 String</td>
+                        <td>Three username/password pairs</td>
+                    </tr>
+                    <tr>
+                        <td>Console Functions</td>
+                        <td>Full config dump, debug mode</td>
+                    </tr>
+                    <tr>
+                        <td>localStorage</td>
+                        <td>JWT token, API key backup, user preferences</td>
+                    </tr>
+                    <tr>
+                        <td>sessionStorage</td>
+                        <td>Temp auth, debug endpoints</td>
+                    </tr>
+                    <tr>
+                        <td>Network Headers</td>
+                        <td>API keys in Authorization and custom headers</td>
+                    </tr>
+                    <tr>
+                        <td>Network Payload</td>
+                        <td>Analytics data with Stripe key</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="fix-section">
+            <h2>The Fix</h2>
+            <p>None of these secrets should ever appear in frontend code. The correct architecture:</p>
+            <ol>
+                <li>Store all secrets on your backend server</li>
+                <li>Frontend calls YOUR backend API</li>
+                <li>Backend adds authentication and calls third-party APIs</li>
+                <li>Responses flow back through your backend</li>
+            </ol>
+            <p style="margin-top: 15px; margin-bottom: 0;">Services like Vercel Edge Functions, Cloudflare Workers, or a simple Express server can act as this secure proxy layer.</p>
+        </div>
+        <h2>Quick DevTools Reference</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Panel</th>
+                    <th>Primary Use</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Elements</td>
+                    <td>Inspect HTML/CSS, find hidden elements, check data attributes</td>
+                </tr>
+                <tr>
+                    <td>Console</td>
+                    <td>View errors, run JavaScript, access global objects</td>
+                </tr>
+                <tr>
+                    <td>Sources</td>
+                    <td>Search code, set breakpoints, debug step-by-step</td>
+                </tr>
+                <tr>
+                    <td>Network</td>
+                    <td>Monitor requests, inspect headers and payloads</td>
+                </tr>
+                <tr>
+                    <td>Application</td>
+                    <td>View cookies, localStorage, sessionStorage, service workers</td>
+                </tr>
+                <tr>
+                    <td>Performance</td>
+                    <td>Profile load times, find bottlenecks</td>
+                </tr>
+                <tr>
+                    <td>Lighthouse</td>
+                    <td>Automated audits for performance, accessibility, SEO</td>
+                </tr>
+                <tr>
+                    <td>Recorder</td>
+                    <td>Record and replay user flows</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p>Created by <a href="https://drlee.io">Dr. Ernesto Lee</a></p>
+        <p style="margin-top: 10px;">All credentials in this demo are completely fake. They follow realistic patterns to help learners recognize exposed secrets in real applications.</p>
+    </footer>
+</body>
+</html>
