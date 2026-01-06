@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureChat Pro - AI-Powered Messaging</title>
+    <!-- TODO: Remove before production - Config for staging environment -->
+    <!-- FIREBASE_CONFIG: AIzaSyDOCAbC123dEf456GhI789jKl_MnsT321_rwXyz -->
+    <!-- ADMIN_PASSWORD: SuperSecure2024! -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00BFA5, #FF7043);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .chat-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .message-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1rem;
+        }
+        input[type="text"]::placeholder {
+            color: #666;
+        }
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #00BFA5, #00897B);
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,191,165,0.4);
+        }
+        .messages {
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .message {
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            border-radius: 18px;
+            max-width: 80%;
+        }
+        .message.user {
+            background: #00BFA5;
+            margin-left: auto;
+        }
+        .message.ai {
+            background: rgba(255,255,255,0.1);
+        }
+        .status {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .feature {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .hidden-admin-panel {
+            display: none;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #444;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug mode: enabled | Session: dev_session_abc123 -->
+    <div class="container">
+        <header>
+            <h1>SecureChat Pro</h1>
+            <p class="subtitle">Enterprise AI Messaging Platform</p>
+        </header>
+        <div class="chat-container">
+            <div class="message-input">
+                <input type="text" id="userMessage" placeholder="Type your message to AI...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+            <div class="messages" id="messageContainer">
+                <div class="status">Send a message to start chatting with our AI</div>
+            </div>
+        </div>
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>End-to-End Encrypted</h3>
+                <p>Your messages are secure</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>GPT-4 Powered</h3>
+                <p>Latest AI technology</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Real-time</h3>
+                <p>Instant responses</p>
+            </div>
+        </div>
+        <!-- Hidden admin panel - do not remove -->
+        <div class="hidden-admin-panel" 
+             id="adminPanel"
+             data-admin-key="sk-admin-Xk9Lm3Np7Qr2St5Uv8Wx1Yz4Ab6Cd9Ef"
+             data-debug-token="dbg_tk_2024_internal_use_only"
+             data-feature-flags="beta,experimental,admin-override">
+            <h2>Admin Dashboard</h2>
+            <p>For internal use only</p>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 SecureChat Pro. All rights reserved.</p>
+        <p>Build: v2.3.1-beta | Environment: production</p>
+    </footer>
+    <script>
+        // ===========================================
+        // CONFIGURATION - DO NOT MODIFY
+        // ===========================================
+        // Environment variables (injected at build time)
+        const ENV = {
+            OPENAI_API_KEY: "sk-proj-Abc123Def456Ghi789Jkl012Mno345Pqr678Stu901Vwx234Yz",
+            OPENAI_ORG_ID: "org-Xy7Kl9Mn2Pq4Rs6Tu8Vw0Abc",
+            API_BASE_URL: "https://api.openai.com/v1",
+            STRIPE_PUBLISHABLE_KEY: "pk_live_51ABC123DEF456GHI789jkl",
+            STRIPE_SECRET_KEY: "sk_live_51ABC123DEF456GHI789xyz",
+            FIREBASE_API_KEY: "AIzaSyDOCAbC123dEf456GhI789jKl",
+            FIREBASE_AUTH_DOMAIN: "securechat-pro.firebaseapp.com",
+            FIREBASE_PROJECT_ID: "securechat-pro-2024",
+            SENTRY_DSN: "https://abc123def456@o789012.ingest.sentry.io/1234567",
+            ANALYTICS_KEY: "UA-12345678-9",
+            INTERNAL_API_SECRET: "int_sec_Qm8Kp3Lx7Nv2Ry5Tw9Uz",
+            JWT_SECRET: "jwt_super_secret_key_do_not_share_2024!@#$",
+            DATABASE_URL: "mongodb+srv://admin:P@ssw0rd123!@cluster0.abc123.mongodb.net/securechat",
+            REDIS_URL: "redis://default:RedisPass789!@redis-12345.c1.us-east-1-2.ec2.cloud.redislabs.com:12345",
+            AWS_ACCESS_KEY_ID: "AKIAIOSFODNN7EXAMPLE",
+            AWS_SECRET_ACCESS_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            TWILIO_ACCOUNT_SID: "AC1234567890abcdef1234567890abcdef",
+            TWILIO_AUTH_TOKEN: "1234567890abcdef1234567890abcdef",
+            SENDGRID_API_KEY: "SG.AbCdEfGhIjKlMnOpQrStUv.WxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz",
+            GITHUB_TOKEN: "ghp_1234567890abcdefghijklmnopqrstuvwxyz",
+            SLACK_BOT_TOKEN: "xoxb-123456789012-1234567890123-AbCdEfGhIjKlMnOpQrStUvWx",
+            ENCRYPTION_KEY: "aes-256-gcm-key-Xy7Mn2Pq4Rs6Tu8Vw0AbcDef123456",
+            DEBUG_MODE: true
+        };
+        // Obfuscated config (base64 - totally "secure" right?)
+        const HIDDEN_CONFIG = "eyJhZG1pbl9wYXNzd29yZCI6IkFkbWluQDEyMyIsIm1hc3Rlcl9rZXkiOiJtc3RyX2tleV8yMDI0X3VsdHJhX3NlY3JldCIsImJhY2tkb29yX2VuYWJsZWQiOnRydWUsInNlY3JldF9lbmRwb2ludCI6Ii9hcGkvdjEvYWRtaW4vc2VjcmV0In0=";
+        // Decode it for "internal use"
+        const DECODED_CONFIG = JSON.parse(atob(HIDDEN_CONFIG));
+        // ===========================================
+        // "ENCRYPTED" USER DATABASE (ROT13 - Very Secure!)
+        // ===========================================
+        const ENCRYPTED_USERS = "hfre1:cnffjbeq123,hfre2:frpher456,nqzva:FhcreNqzva2024!";
+        function rot13(str) {
+            return str.replace(/[a-zA-Z]/g, function(c) {
+                return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+            });
+        }
+        // ===========================================
+        // APPLICATION STATE
+        // ===========================================
+        let conversationHistory = [];
+        let userSession = {
+            id: generateSessionId(),
+            created: new Date().toISOString(),
+            apiCallCount: 0
+        };
+        // Store sensitive data in localStorage (very common mistake!)
+        localStorage.setItem('user_auth_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NSIsImVtYWlsIjoiYWRtaW5Ac2VjdXJlY2hhdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDk1MTIwMDAsImV4cCI6MTc0MTA0ODAwMH0.fake_signature_here');
+        localStorage.setItem('api_key_backup', ENV.OPENAI_API_KEY);
+        localStorage.setItem('stripe_customer_id', 'cus_ABC123DEF456');
+        localStorage.setItem('user_preferences', JSON.stringify({
+            theme: 'dark',
+            notifications: true,
+            betaFeatures: true,
+            internalUser: true,
+            accessLevel: 'admin'
+        }));
+        // Session storage too!
+        sessionStorage.setItem('temp_auth', 'temp_tk_' + Math.random().toString(36).substring(7));
+        sessionStorage.setItem('debug_info', JSON.stringify({
+            env: 'production',
+            version: '2.3.1',
+            buildHash: 'abc123def',
+            secretEndpoint: '/api/internal/debug'
+        }));
+        // ===========================================
+        // HELPER FUNCTIONS
+        // ===========================================
+        function generateSessionId() {
+            return 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+        }
+        function logToServer(event, data) {
+            // In production, this would send to our logging service
+            // Current logging endpoint: https://logs.securechat.internal/v1/events
+            // API Key for logging: log_key_Mn8Pq3Lx7Nv2Ry5Tw
+            console.log('[SecureChat]', event, data);
+        }
+        // ===========================================
+        // MAIN CHAT FUNCTIONALITY
+        // ===========================================
+        async function sendMessage() {
+            const input = document.getElementById('userMessage');
+            const container = document.getElementById('messageContainer');
+            const message = input.value.trim();
+            if (!message) return;
+            // Clear status message on first send
+            if (container.querySelector('.status')) {
+                container.innerHTML = '';
+            }
+            // Add user message to UI
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.textContent = message;
+            container.appendChild(userDiv);
+            input.value = '';
+            // Add to conversation history
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
+            userSession.apiCallCount++;
+            try {
+                // Make API call to OpenAI
+                // NOTE: In production, this should go through our backend!
+                // But for demo purposes, we're calling directly...
+                const response = await fetch(ENV.API_BASE_URL + '/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + ENV.OPENAI_API_KEY,
+                        'OpenAI-Organization': ENV.OPENAI_ORG_ID,
+                        'X-Request-ID': userSession.id,
+                        'X-Internal-Auth': ENV.INTERNAL_API_SECRET
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: conversationHistory,
+                        max_tokens: 500,
+                        temperature: 0.7,
+                        user: userSession.id
+                    })
+                });
+                const data = await response.json();
+                if (data.choices && data.choices[0]) {
+                    const aiMessage = data.choices[0].message.content;
+                    conversationHistory.push({
+                        role: 'assistant',
+                        content: aiMessage
+                    });
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'message ai';
+                    aiDiv.textContent = aiMessage;
+                    container.appendChild(aiDiv);
+                } else if (data.error) {
+                    showError('API Error: ' + data.error.message);
+                }
+            } catch (error) {
+                showError('Failed to connect to AI service');
+                console.error('API Error:', error);
+                // Log error with full context (another mistake!)
+                logToServer('api_error', {
+                    error: error.message,
+                    apiKey: ENV.OPENAI_API_KEY.substring(0, 20) + '...',
+                    session: userSession
+                });
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+        function showError(message) {
+            const container = document.getElementById('messageContainer');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'message ai';
+            errorDiv.style.background = 'rgba(255,100,100,0.2)';
+            errorDiv.textContent = '⚠️ ' + message;
+            container.appendChild(errorDiv);
+        }
+        // Enter key to send
+        document.getElementById('userMessage').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        // ===========================================
+        // EASTER EGGS & HIDDEN FUNCTIONALITY
+        // ===========================================
+        // Konami code unlocks admin panel
+        let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    unlockAdminPanel();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+        function unlockAdminPanel() {
+            console.log('🎮 Konami Code Activated!');
+            console.log('Admin Panel Unlocked!');
+            console.log('Admin Credentials:', DECODED_CONFIG);
+            document.getElementById('adminPanel').style.display = 'block';
+            alert('Welcome, Admin! Check the console for your credentials.');
+        }
+        // Secret console commands
+        window.revealSecrets = function() {
+            console.log('='.repeat(50));
+            console.log('🔐 SECRET CONFIGURATION DUMP');
+            console.log('='.repeat(50));
+            console.log('OpenAI Key:', ENV.OPENAI_API_KEY);
+            console.log('Stripe Secret:', ENV.STRIPE_SECRET_KEY);
+            console.log('Database URL:', ENV.DATABASE_URL);
+            console.log('AWS Credentials:', ENV.AWS_ACCESS_KEY_ID, ENV.AWS_SECRET_ACCESS_KEY);
+            console.log('JWT Secret:', ENV.JWT_SECRET);
+            console.log('Decoded Hidden Config:', DECODED_CONFIG);
+            console.log('Decrypted Users:', rot13(ENCRYPTED_USERS));
+            console.log('='.repeat(50));
+            return 'All secrets revealed! Check above.';
+        };
+        window.getConfig = function() {
+            return ENV;
+        };
+        window.debugMode = function() {
+            console.table(ENV);
+            console.log('Session:', userSession);
+            console.log('Conversation History:', conversationHistory);
+            console.log('LocalStorage:', {...localStorage});
+            console.log('SessionStorage:', {...sessionStorage});
+            return 'Debug info dumped to console!';
+        };
+        // Log startup info
+        console.log('%c SecureChat Pro v2.3.1 ', 'background: #00BFA5; color: white; padding: 10px; font-size: 16px;');
+        console.log('%c Debug Mode: ENABLED ', 'background: #FF7043; color: white; padding: 5px;');
+        console.log('Initialized with session:', userSession.id);
+        console.log('API Endpoint:', ENV.API_BASE_URL);
+        console.log('Tip: Type revealSecrets() to see all configuration');
+        // Fetch user location (for "personalization")
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    console.log('User location captured:', pos.coords.latitude, pos.coords.longitude);
+                    // Would normally send this to server with the API key for "analytics"
+                },
+                (err) => console.log('Geolocation not available')
+            );
+        }
+        // ===========================================
+        // FAKE API CALLS FOR DEMO (visible in Network tab)
+        // ===========================================
+        setTimeout(() => {
+            // Simulated auth check
+            fetch('https://httpbin.org/headers', {
+                headers: {
+                    'Authorization': 'Bearer ' + ENV.OPENAI_API_KEY,
+                    'X-API-Key': ENV.INTERNAL_API_SECRET,
+                    'X-Firebase-Key': ENV.FIREBASE_API_KEY
+                }
+            }).catch(() => {});
+            // Simulated analytics ping
+            fetch('https://httpbin.org/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Analytics-Key': ENV.ANALYTICS_KEY
+                },
+                body: JSON.stringify({
+                    event: 'page_load',
+                    session: userSession.id,
+                    stripe_key: ENV.STRIPE_PUBLISHABLE_KEY,
+                    timestamp: Date.now()
+                })
+            }).catch(() => {});
+        }, 1000);
+    </script>
+    <!--
+    =============================================
+    DEPLOYMENT NOTES - REMOVE BEFORE PRODUCTION
+    =============================================
+    Staging Server: staging.securechat.internal
+    Production Server: app.securechat.io
+    SSH Key Location: /home/deploy/.ssh/id_rsa
+    Database Backup: s3://securechat-backups/daily/
+    S3 Access Key: AKIAIOSFODNN7EXAMPLE
+    S3 Secret Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    Monitoring Dashboard: https://grafana.securechat.internal
+    Grafana Login: admin / Grafana2024!
+    CI/CD Pipeline: GitHub Actions
+    GitHub Deploy Token: ghp_DeployToken123456789abcdefghijklmn
+    =============================================
+    -->
+</body>
+</html>
